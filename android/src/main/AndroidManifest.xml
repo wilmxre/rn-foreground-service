@@ -6,7 +6,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
         <application>
 
-        <activity
+            <receiver android:name=".RestartReceiver" android:exported="false"/>
+
+
+            <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"

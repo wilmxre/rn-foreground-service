@@ -11,7 +11,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.core.app.NotificationCompat;
+
 import android.util.Log;
 
 import com.facebook.react.R;
@@ -38,7 +40,7 @@ class NotificationHelper {
     }
 
     private NotificationHelper(Context context) {
-        mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.context = context;
         this.config = new NotificationConfig(context);
     }
@@ -54,26 +56,26 @@ class NotificationHelper {
             return null;
         }
 
-        Log.d("SuperLog",""+bundle.getString("mainOnPress"));
+        Log.d("SuperLog", "" + bundle.getString("mainOnPress"));
 
         Intent notificationIntent = new Intent(context, mainActivityClass);
-        notificationIntent.putExtra("mainOnPress",bundle.getString("mainOnPress"));
+        notificationIntent.putExtra("mainOnPress", bundle.getString("mainOnPress"));
         int uniqueInt1 = (int) (System.currentTimeMillis() & 0xfffffff);
 
         // Changing FLAG_UPDATE_CURRENT to FLAG_MUTABLE for android 12 support
         PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueInt1, notificationIntent, PendingIntent.FLAG_MUTABLE);
 
-        if(bundle.getBoolean("button", false) == true) {
+        if (bundle.getBoolean("button", false) == true) {
             Log.d("SuperLog C ", "inButtonOnPress" + bundle.getString("buttonOnPress"));
             Intent notificationBtnIntent = new Intent(context, mainActivityClass);
             notificationBtnIntent.putExtra("buttonOnPress", bundle.getString("buttonOnPress"));
             int uniqueInt = (int) (System.currentTimeMillis() & 0xfffffff);
 
-             // Changing FLAG_UPDATE_CURRENT to FLAG_MUTABLE for android 12 support
+            // Changing FLAG_UPDATE_CURRENT to FLAG_MUTABLE for android 12 support
             pendingBtnIntent = PendingIntent.getActivity(context, uniqueInt, notificationBtnIntent, PendingIntent.FLAG_MUTABLE);
         }
 
-        if(bundle.getBoolean("button2", false) == true) {
+        if (bundle.getBoolean("button2", false) == true) {
             Log.i("SuperLog C ", "inButton2OnPress" + bundle.getString("button2OnPress"));
             Intent notificationBtn2Intent = new Intent(context, mainActivityClass);
             notificationBtn2Intent.putExtra("button2OnPress", bundle.getString("button2OnPress"));
@@ -89,7 +91,7 @@ class NotificationHelper {
         final String priorityString = bundle.getString("importance");
 
         if (priorityString != null) {
-            switch(priorityString.toLowerCase()) {
+            switch (priorityString.toLowerCase()) {
                 case "max":
                     priority = NotificationCompat.PRIORITY_MAX;
                     break;
@@ -114,7 +116,7 @@ class NotificationHelper {
         String visibilityString = bundle.getString("visibility");
 
         if (visibilityString != null) {
-            switch(visibilityString.toLowerCase()) {
+            switch (visibilityString.toLowerCase()) {
                 case "private":
                     visibility = NotificationCompat.VISIBILITY_PRIVATE;
                     break;
@@ -131,47 +133,48 @@ class NotificationHelper {
 
         checkOrCreateChannel(mNotificationManager, bundle);
 
+        Log.d("SuperLog", "NOTIFICATION CHANNEL ID: " + NOTIFICATION_CHANNEL_ID);
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(title)
-            .setVisibility(visibility)
-            .setPriority(priority)
-            .setContentIntent(pendingIntent)
-            .setOngoing(bundle.getBoolean("ongoing", false))
-            .setContentText(bundle.getString("message"));
+                .setContentTitle(title)
+                .setVisibility(visibility)
+                .setPriority(priority)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true).setFullScreenIntent(pendingIntent, true)
+                .setContentText(bundle.getString("message"));
 
-       
 
-        if(bundle.getBoolean("button", false) == true){
+        if (bundle.getBoolean("button", false) == true) {
             notificationBuilder.addAction(R.drawable.redbox_top_border_background, bundle.getString("buttonText", "Button"), pendingBtnIntent);
         }
 
-        if(bundle.getBoolean("button2", false) == true){
+        if (bundle.getBoolean("button2", false) == true) {
             notificationBuilder.addAction(R.drawable.redbox_top_border_background, bundle.getString("button2Text", "Button"), pendingBtn2Intent);
         }
 
 
-        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setColor(this.config.getNotificationColor());
         }
         String color = bundle.getString("color");
-        if(color != null){
+        if (color != null) {
             notificationBuilder.setColor(Color.parseColor(color));
         }
 
         notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message")));
 
 
-        String iconName = bundle.getString("icon"); ;
-        
-        if(iconName == null){
+        String iconName = bundle.getString("icon");
+        ;
+
+        if (iconName == null) {
             iconName = "ic_launcher";
         }
         notificationBuilder.setSmallIcon(getResourceIdForResourceName(context, iconName));
 
 
         String largeIconName = bundle.getString("largeIcon");
-        if(largeIconName == null){
+        if (largeIconName == null) {
             largeIconName = "ic_launcher";
         }
 
@@ -185,16 +188,16 @@ class NotificationHelper {
         String numberString = bundle.getString("number");
         if (numberString != null) {
             int numberInt = Integer.parseInt(numberString);
-            if(numberInt > 0){
+            if (numberInt > 0) {
                 notificationBuilder.setNumber(numberInt);
             }
         }
 
         Boolean progress = bundle.getBoolean("progressBar");
-        if(progress){
+        if (progress) {
             double max = bundle.getDouble("progressBarMax");
             double curr = bundle.getDouble("progressBarCurr");
-            notificationBuilder.setProgress((int)max, (int)curr,false);
+            notificationBuilder.setProgress((int) max, (int) curr, false);
         }
 
         notificationBuilder.setOnlyAlertOnce(true);
@@ -227,6 +230,7 @@ class NotificationHelper {
     }
 
     private static boolean channelCreated = false;
+
     private void checkOrCreateChannel(NotificationManager manager, Bundle bundle) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
@@ -239,7 +243,7 @@ class NotificationHelper {
         final String importanceString = bundle.getString("importance");
 
         if (importanceString != null) {
-            switch(importanceString.toLowerCase()) {
+            switch (importanceString.toLowerCase()) {
                 case "default":
                     importance = NotificationManager.IMPORTANCE_DEFAULT;
                     break;

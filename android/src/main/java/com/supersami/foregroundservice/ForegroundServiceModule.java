@@ -3,7 +3,9 @@ package com.supersami.foregroundservice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.app.NotificationManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -106,7 +108,6 @@ public class ForegroundServiceModule extends ReactContextBaseJavaModule {
         }
 
         try{
-
             Intent intent = new Intent(getReactApplicationContext(), ForegroundService.class);
             intent.setAction(Constants.ACTION_UPDATE_NOTIFICATION);
             intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
